@@ -1,0 +1,16 @@
+[package]
+name = "xreflect"
+version = "0.1.0"
+authors = ["hydrogenmacro <hydrogenmacro@gmail.com>"]
+description = "Quick and easy reflection"
+keywords = ["reflect", "reflection"]
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+proc-macro2 = "1.0"
+syn = "2.0.72"
+xreflect-core = { path = "xreflect-core" }
