@@ -1,68 +1,62 @@
-use std::any::Any;
 use phf;
 pub trait StructReflect: Sized {
+	const STRUCT_TYPE: StructType;
 	fn type_name() -> &'static str {
 		todo!()
 	}
-	fn list_fields() -> impl Iterator<Item=(&'static str, &'static str)> {
+	fn get_field<T>(&self, _field_name: &str) -> &T {
 		todo!()
 	}
-	fn list_elements() -> impl Iterator<Item=&'static str> {
+	fn set_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Result<(), ReflectError> {
 		todo!()
 	}
-	fn get_field<T>(&self, field_name: &str) -> &T {
+	fn with_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Self {
 		todo!()
 	}
-	fn set_field<T>(&mut self, field_name: &str, new_field_value: T) -> Result<(), ReflectError> {
+	fn get_element<T>(&self, _element_index: usize) -> &T {
 		todo!()
 	}
-	fn with_field<T>(&mut self, field_name: &str, new_field_value: T) -> Self {
+	fn set_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Result<(), ReflectError> {
 		todo!()
 	}
-	fn get_element<T>(&self, element_index: usize) -> &T {
-		todo!()
-	}
-	fn set_element<T>(&mut self, element_index: usize, new_field_value: T) -> Result<(), ReflectError> {
-		todo!()
-	}
-	fn with_element<T>(&mut self, element_index: usize, new_field_value: T) -> Self {
+	fn with_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Self {
 		todo!()
 	}
 }
 pub trait EnumReflect: Sized {
-	const AMOUNT_OF_OPTIONS: usize;
-	fn members() -> [&'static str; Self::AMOUNT_OF_OPTIONS] {
+	const MEMBERS: phf::Map<&'static str, StructType>;
+	fn type_name_of_member(_member: &str) -> &'static str {
 		todo!()
 	}
-	fn type_name_of_member(member: &str) -> &'static str {
+	fn construct(_enum_member: &str) -> Self {
 		todo!()
 	}
-	fn list_fields_for_member(member: &str) -> impl Iterator<Item=(String, String)> {
+	fn get_field<T>(&self, _field_name: &str) -> &T {
 		todo!()
 	}
-	fn construct(enum_member: &str) -> Self {
+	fn set_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Result<(), ReflectError> {
 		todo!()
 	}
-	fn get_field<T>(&self, field_name: &str) -> &T {
+	fn has_field(&self, _field_name: &str) -> bool { todo!() }
+	fn with_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Self {
 		todo!()
 	}
-	fn set_field<T>(&mut self, field_name: &str, new_field_value: T) -> Result<(), ReflectError> {
+	fn get_element<T>(&self, _element_index: usize) -> &T {
 		todo!()
 	}
-	fn with_field<T>(&mut self, field_name: &str, new_field_value: T) -> Self {
+	fn set_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Result<(), ReflectError> {
 		todo!()
 	}
-	fn element<T>(&self, element_index: usize) -> &T {
-		todo!()
-	}
-	fn set_element<T>(&mut self, element_index: usize, new_field_value: T) -> Result<(), ReflectError> {
-		todo!()
-	}
-	fn with_element<T>(&mut self, element_index: usize, new_field_value: T) -> Self {
+	fn has_element(&self, _element_index: usize) -> bool { todo!() }
+	fn with_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Self {
 		todo!()
 	}
 }
-
+pub enum StructType {
+	Unit,
+	Record(phf::Map<&'static str, &'static str>),
+	Tuple(Vec<&'static str>)
+}
 pub enum ReflectError {
 	FieldNotFound,
 	WrongType,
