@@ -8,8 +8,8 @@ pub trait EnumReflectInternal: Sized {
 	const TYPE_NAME: &'static str;
 	fn get_index_of_member_name(member_name: &str) -> Result<usize, ()>;
 	fn create_member_from_raw_parts(member_name: &str, member_data: StructLikeData);
-	fn get_field_from_index<T>(&self, index: usize) -> &T;
-	fn get_field_from_index_mut<T>(&mut self, index: usize) -> &mut T;
+	fn get_field_from_index<T>(&self, index: usize) -> Result<&T, ()>;
+	fn get_field_from_index_mut<T>(&mut self, index: usize) -> Result<&mut T, ()>;
 }
 pub trait EnumReflect: EnumReflectInternal {
 	fn member_names() -> &'static [&'static str] {
@@ -18,7 +18,7 @@ pub trait EnumReflect: EnumReflectInternal {
 	fn get_field<T>(&self, field_name: &str) -> &T {
 		let i = Self::get_index_of_member_name(field_name)
 			.expect(&format!("Field '{}' does not exist on ", field_name));
-		self.get_field_from_index::<T>(i)
+		self.get_field_from_index::<T>(i).unwrap()
 	}
 	fn get_field_mut<T>(&mut self, field_name: &str) -> &mut T;
 	fn set_field<T>(&mut self, field_name: &str, new_field_value: T) -> Result<(), ReflectError>;
