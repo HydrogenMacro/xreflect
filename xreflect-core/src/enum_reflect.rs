@@ -1,35 +1,28 @@
-use crate::types::{ReflectError, StructLikeType};
+use std::mem::MaybeUninit;
+use crate::types::{ArbitraryTypeName, ReflectError, StructLikeData};
 
-pub trait EnumReflect: Sized {
-	const MEMBERS: &'static [StructLikeType];
-	fn reflect_type_name_of_member(_member: &str) -> &'static str {
-		todo!()
-	}
-	fn construct(_enum_member: &str) -> Self {
-		todo!()
-	}
-	fn get_field<T>(&self, _field_name: &str) -> &T {
-		todo!()
-	}
-	fn set_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Result<(), ReflectError> {
-		todo!()
-	}
-	fn has_field(&self, _field_name: &str) -> bool { todo!() }
-	fn with_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Self {
-		todo!()
-	}
-	fn get_element<T>(&self, _element_index: usize) -> &T {
-		todo!()
-	}
-	fn set_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Result<(), ReflectError> {
-		todo!()
-	}
-	fn has_element(&self, _element_index: usize) -> bool { todo!() }
-	fn with_element<T>(&mut self, _element_index: usize, _new_field_value: T) -> Self {
-		todo!()
-	}
+trait EnumReflectInternal: Sized {
+	const MEMBERS: &'static [StructLikeData];
+	fn get_member_info(_member_name: &'static str) -> StructLikeData;
+	fn get_index_of_member_name(_member_name: &'static str) -> usize;
+	fn create_enum_from_raw_parts(_member_name: &'static str, _member_data: StructLikeData);
 }
-
-pub trait EnumBuilder: EnumReflect + Default {
-
+pub trait EnumReflect: EnumReflectInternal {
+	fn reflect_type_name_of_member(_member: &str) -> &'static str;
+	fn get_field<T>(&self, _field_name: &str) -> &T;
+	fn get_field_mut<T>(&mut self, _field_name: &str) -> &mut T;
+	fn set_field<T>(&mut self, _field_name: &str, _new_field_value: T) -> Result<(), ReflectError>;
+	fn has_field(&self, _field_name: &str) -> bool;
+	fn get_field_at<T>(&self, _field_index: usize) -> &T;
+	fn get_field_mut_at<T>(&mut self, _field_index: usize) -> &mut T;
+	fn set_field_at<T>(&mut self, _field_index: usize, _new_field_value: T) -> Result<(), ReflectError>;
+	fn has_field_at(&self, _field_index: usize) -> bool;
+	fn construct(_member_name: &'static str) -> impl EnumBuilder;
+}
+pub trait EnumBuilder: Sized {
+	fn new() -> Self;
+	fn with_field<T>(&mut self, _field_name: &'static str, _field_value: T);
+	fn with_field_at<T>(&mut self, _field_index: usize, _field_value: T);
+	fn try_finalize<T>(&self) -> Result<(), ()>;
+	fn finalize(&self);
 }
