@@ -43,10 +43,10 @@ impl EnumReflectInternal for Test {
 			Self::Struct { field } => {
 				match index {
 					0 => {
-						if !T::is_type_of(field) {
+						if !<T as IsType<T, u8>>::is_type_of(&field) {
 							return Err(());
 						}
-						unsafe { mem::transmute(field) }
+						Ok(unsafe { mem::transmute(field) })
 					},
 					_ => Err(())
 				}
@@ -54,10 +54,10 @@ impl EnumReflectInternal for Test {
 			Self::Tuple(a) => {
 				match index {
 					0 => {
-						if !T::is_type_of(a) {
+						if !<T as IsType<T, i32>>::is_type_of(&a) {
 							return Err(());
 						}
-						unsafe { mem::transmute(a) }
+						Ok(unsafe { mem::transmute(a) })
 					},
 					_ => Err(())
 				}
@@ -69,17 +69,22 @@ impl EnumReflectInternal for Test {
 		todo!()
 	}
 }
-trait IsType<T> {
-	fn is_type_of(x: &T) -> bool;
+trait IsType<T, U> {
+	fn is_type_of(x: &U) -> bool;
 }
-impl<T> IsType<T> for T {
-	default fn is_type_of(x: &T) -> bool {
+impl<T, U> IsType<T, U> for T {
+	default fn is_type_of(x: &U) -> bool {
 		false
+	}
+}
+impl<T> IsType<T, T> for T {
+	fn is_type_of(x: &T) -> bool {
+		true
 	}
 }
 #[test]
 fn main() {
-	let a = Test::Tuple(32);
-	let b = a.get_field_from_index::<i32>(1);
+	let a = Test::Tuple(36);
+	let b = a.get_field_from_index::<i32>(0);
 	dbg!(b);
 }
