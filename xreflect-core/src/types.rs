@@ -7,15 +7,14 @@ pub enum StructLikeData {
 
 #[derive(Debug)]
 pub enum ReflectError {
+	EnumMemberNotFound,
 	FieldNotFound,
 	WrongType,
-	IsNotTupleLike,
-	IsNotRecordLike,
 }
 #[derive(Debug)]
 pub struct TypePath(&'static str);
 impl TypePath {
-	pub fn new(path: &'static str) -> TypePath {
+	pub const fn new(path: &'static str) -> TypePath {
 		TypePath(path)
 	}
 }
