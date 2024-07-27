@@ -1,5 +1,3 @@
-type TypePath = &'static str;
-
 #[derive(Debug)]
 pub enum StructLikeData {
 	Unit,
@@ -13,4 +11,11 @@ pub enum ReflectError {
 	WrongType,
 	IsNotTupleLike,
 	IsNotRecordLike,
+}
+#[derive(Debug)]
+pub struct TypePath(&'static str);
+impl TypePath {
+	pub fn new(path: &'static str) -> TypePath {
+		TypePath(path)
+	}
 }

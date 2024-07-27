@@ -19,7 +19,9 @@ pub trait EnumReflect: EnumReflectInternal {
 			.expect(&format!("Field '{}' does not exist on ", field_name));
 		self.get_field_from_index::<T>(i).unwrap()
 	}
-	fn get_field_mut<T: 'static>(&mut self, field_name: &str) -> &mut T;
+	fn get_field_mut<T: 'static>(&mut self, field_name: &str) -> &mut T {
+
+	}
 	fn set_field<T: 'static>(&mut self, field_name: &str, new_field_value: T) -> Result<(), ReflectError>;
 	fn has_field(&self, field_name: &str) -> bool;
 	fn get_field_at<T: 'static>(&self, field_index: usize) -> &T;
