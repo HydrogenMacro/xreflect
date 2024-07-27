@@ -1,7 +1,8 @@
 #![feature(specialization)]
 
 use xreflect::{EnumReflectInternal, StructLikeData};
-
+use xreflect_core::Builder;
+use std::any::Any;
 pub enum Test {
 	Unit,
 	Tuple(i32),
@@ -14,7 +15,7 @@ impl EnumReflectInternal for Test {
 	const MEMBERS: &'static [StructLikeData] = &[
 		StructLikeData::Unit,
 		StructLikeData::Tuple(&[Some("::core::primitive::i32")]),
-		StructLikeData::Record(&[("field", Some("::core::primitive::u8"))])
+		StructLikeData::Record(&[Some("::core::primitive::u8")])
 	];
 	const MEMBER_NAMES: &'static [&'static str] = &[];
 	const TYPE_PATH: &'static str = "crate::Test";
@@ -28,14 +29,7 @@ impl EnumReflectInternal for Test {
 			_ => Err(())
 		}
 	}
-
-	fn create_member_from_raw_parts(member_name: &str, member_data: StructLikeData) {
-		todo!()
-	}
-
-	fn get_field_from_index<T>(&self, index: usize) -> Result<&T, ()> {
-		use std::mem;
-
+	fn get_field_from_index<T: 'static>(&self, index: usize) -> Result<&T, ()> {
 		match self {
 			Self::Unit => {
 				return Err(());
@@ -43,22 +37,14 @@ impl EnumReflectInternal for Test {
 			Self::Struct { field } => {
 				match index {
 					0 => {
-						if !<T as IsType<T, u8>>::is_type_of(&field) {
-							return Err(());
-						}
-						Ok(unsafe { mem::transmute(field) })
+						(field as &dyn Any).downcast_ref::<T>().ok_or(())
 					},
 					_ => Err(())
 				}
 			}
-			Self::Tuple(a) => {
+			Self::Tuple(field) => {
 				match index {
-					0 => {
-						if !<T as IsType<T, i32>>::is_type_of(&a) {
-							return Err(());
-						}
-						Ok(unsafe { mem::transmute(a) })
-					},
+					0 => (field as &dyn Any).downcast_ref::<T>().ok_or(()),
 					_ => Err(())
 				}
 			}
@@ -66,20 +52,33 @@ impl EnumReflectInternal for Test {
 	}
 
 	fn get_field_from_index_mut<T>(&mut self, index: usize) -> Result<&mut T, ()> {
-		todo!()
+		match self {
+			Self::Unit => {
+				return Err(());
+			}
+			Self::Struct { field } => {
+				match index {
+					0 => {
+						(field as &mut dyn Any).downcast_mut::<T>().ok_or(())
+					},
+					_ => Err(())
+				}
+			}
+			Self::Tuple(field) => {
+				match index {
+					0 => (field as &mut dyn Any).downcast_mut::<T>().ok_or(()),
+					_ => Err(())
+				}
+			}
+		}
 	}
 }
-trait IsType<T, U> {
-	fn is_type_of(x: &U) -> bool;
-}
-impl<T, U> IsType<T, U> for T {
-	default fn is_type_of(x: &U) -> bool {
-		false
-	}
-}
-impl<T> IsType<T, T> for T {
-	fn is_type_of(x: &T) -> bool {
-		true
+pub(super) mod xreflect_builders0x121839438923924398234898924 {
+	#![allow(non_snake_case)]
+	pub mod enum_Test {
+		struct Unit;
+		struct Tuple(i32);
+		struct Struct { field: u8 }
 	}
 }
 #[test]

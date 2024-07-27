@@ -3,7 +3,7 @@ type TypePath = &'static str;
 #[derive(Debug)]
 pub enum StructLikeData {
 	Unit,
-	Record(&'static [(&'static str, Option<TypePath>)]),
+	Record(&'static [Option<TypePath>]),
 	Tuple(&'static [Option<TypePath>])
 }
 
