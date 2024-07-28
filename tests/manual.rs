@@ -1,8 +1,7 @@
 #![allow(unused)]
 
-use xreflect::{EnumReflectInternal, StructLikeData};
-use xreflect_core::{Builder, EnumBuildable, ReflectError, TypePath};
-use std::any::Any;
+use xreflect_core::{Builder, EnumBuildable, Reflect, ReflectError, StructType};
+use std::any::{Any, TypeId};
 
 enum Test {
 	Unit,
@@ -12,17 +11,16 @@ enum Test {
 	},
 }
 
-impl EnumReflectInternal for Test {
-	const MEMBERS: &'static [StructLikeData] = &[
-		StructLikeData::Unit,
-		StructLikeData::Tuple(&[Some(TypePath::new("::core::primitive::i32"))]),
-		StructLikeData::Record(&[Some(TypePath::new("::core::primitive::u8"))])
-	];
-	const MEMBER_NAMES: &'static [&'static str] = &[];
-	const TYPE_PATH: &'static str = "crate::Test";
-	const TYPE_NAME: &'static str = "Test";
+impl Reflect for Test {
+	fn amount_of_fields(&self) -> usize {
+		match self {
+			Test::Unit => 0,
+			Test::Tuple(_) => 1,
+			Test::Struct { .. } => 2
+		}
+	}
 
-	fn get_index_of_member_name(member_name: &str) -> Result<usize, ReflectError> {
+	fn get_index_of_field(&self, member_name: &str) -> Result<usize, ReflectError> {
 		match member_name {
 			"Unit" => Ok(0),
 			"Tuple" => Ok(1),
@@ -72,6 +70,22 @@ impl EnumReflectInternal for Test {
 				}
 			}
 		}
+	}
+
+	fn get_type_of_field(&self, field_name: &str) -> TypeId {
+		match self {
+			Test::Unit => {
+				panic!()
+			}
+			Test::Tuple(_) => {}
+			Test::Struct { .. } => {
+
+			}
+		}
+	}
+
+	fn get_type_of_field_at(&self, field_name: &str) -> TypeId {
+		todo!()
 	}
 }
 
