@@ -1,7 +1,7 @@
+mod builder;
 mod reflect;
 mod types;
-mod builder;
 
+pub use builder::*;
 pub use reflect::*;
 pub use types::*;
-pub use builder::*;
