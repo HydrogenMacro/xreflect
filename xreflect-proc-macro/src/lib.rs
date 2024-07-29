@@ -1,5 +1,6 @@
 mod reflect_enum;
 mod reflect_struct;
+mod wrapper_types;
 
 extern crate proc_macro;
 use proc_macro::TokenStream;

@@ -117,7 +117,7 @@ impl EnumReflect for Test {
 		}
 	}
 }
-mod __xreflect_builders0x121839438923924398234898924 {
+mod __xreflect_builders {
 	// reflect actual visibility
 	pub(crate) enum TestBuilder {
 		Unit,
