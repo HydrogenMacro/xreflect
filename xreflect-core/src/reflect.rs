@@ -1,6 +1,9 @@
-use std::any::{type_name, type_name_of_val, TypeId};
-use std::sync::LazyLock;
+#![feature(const_type_id)]
 
+use std::{
+	any::{type_name, type_name_of_val, TypeId},
+	sync::LazyLock,
+};
 use crate::{ReflectError, StructType};
 pub trait Reflect: Sized {
 	fn amount_of_fields(&self) -> usize;
@@ -58,8 +61,7 @@ pub trait Reflect: Sized {
 			),
 			Err(ReflectError::FieldNotFound) => panic!(
 				"There is no field at {} in {}",
-				field_index,
-				type_name_of_self
+				field_index, type_name_of_self
 			),
 			Err(ReflectError::EnumMemberNotFound) => unreachable!(),
 		}
@@ -143,7 +145,7 @@ pub trait Reflect: Sized {
 }
 
 pub trait StructReflect {
-	const TYPE: LazyLock<StructType>;
+	const TYPE: StructType;
 	const FIELD_NAMES: &'static [&'static str];
 	fn try_get_index_of_field(field_name: &str) -> Result<usize, ReflectError>;
 	fn get_index_of_field(field_name: &str) -> usize {
@@ -157,6 +159,6 @@ pub trait StructReflect {
 
 pub trait EnumReflect {
 	const MEMBER_NAMES: &'static [&'static str];
-	const MEMBER_TYPES: LazyLock<&'static [StructType]>;
+	const MEMBER_TYPES: &'static [StructType];
 	fn get_index_of_member(member_name: &str) -> Result<usize, ReflectError>;
 }

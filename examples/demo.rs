@@ -44,20 +44,13 @@ fn main() {
 	}
 
 	#[derive(Default, Reflect)]
-	pub struct Foo {
-		// pub fields are reflected by default
-		pub reflected: (),
+	pub struct Foo<T: Default> {
+		// fields are reflected by default, even when private
+		reflected: (),
 
-		// pub(crate)/pub(super)/private fields aren't
-		unreflected_by_default: (),
-
-		// but you can opt in (with an alias)
-		#[reflect(true, "cool_new_alias")]
-		reflected_even_if_private: (),
-
-		// or opt out
+		// but you can opt out
 		#[reflect(false)]
-		pub unreflected_even_when_pub: (),
+		not_reflected: ()
 	}
 }
 */

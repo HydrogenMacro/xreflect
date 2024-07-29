@@ -1,4 +1,4 @@
-#![allow(unused)]
+#![feature(const_type_id)]
 
 use std::any::{Any, TypeId};
 
@@ -105,7 +105,7 @@ impl EnumReflect for Test {
 	const MEMBER_TYPES: &'static [StructType] = &[
 		StructType::Unit,
 		StructType::Tuple(&[TypeId::of::<i32>()]),
-		StructType::Record(&[("field", TypeId::of::<u8>())])
+		StructType::Record(&[("field", TypeId::of::<u8>())]),
 	];
 
 	fn get_index_of_member(member_name: &str) -> Result<usize, ReflectError> {
@@ -113,7 +113,7 @@ impl EnumReflect for Test {
 			"Unit" => Ok(0),
 			"Tuple" => Ok(1),
 			"Struct" => Ok(2),
-			_ => Err(ReflectError::EnumMemberNotFound)
+			_ => Err(ReflectError::EnumMemberNotFound),
 		}
 	}
 }
