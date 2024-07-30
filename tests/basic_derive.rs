@@ -5,7 +5,7 @@ use xreflect::Reflect;
 enum Test {
 	Unit,
 	Tuple(i32),
-	Struct { field: u8 },
+	Struct { aaa: u8 },
 }
 
 #[test]

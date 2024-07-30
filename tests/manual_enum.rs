@@ -20,9 +20,20 @@ impl Reflect for Test {
 	}
 
 	fn try_get_index_of_field(&self, member_name: &str) -> Result<usize, ReflectError> {
-		match member_name {
-			"0" => Ok(0),
-			_ => Err(ReflectError::FieldNotFound),
+		match self {
+			Test::Unit => Err(ReflectError::FieldNotFound),
+			Test::Tuple(_) => {
+				match member_name {
+					"0" => Ok(0),
+					_ => Err(ReflectError::FieldNotFound),
+				}
+			}
+			Test::Struct { .. } => {
+				match member_name {
+					"field" => Ok(0),
+					_ => Err(ReflectError::FieldNotFound),
+				}
+			}
 		}
 	}
 	fn try_get_field_at<T: 'static>(&self, index: usize) -> Result<&T, ReflectError> {
