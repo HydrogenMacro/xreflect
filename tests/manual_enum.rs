@@ -86,13 +86,13 @@ impl EnumBuildable for Test {
 	fn build(enum_member_name: &'static str) -> impl Builder<Self> {
 		match enum_member_name {
 			"Unit" => {
-				return __xreflect_builders0x121839438923924398234898924::TestBuilder::Unit;
+				return __xreflect_builders::TestBuilder::Unit;
 			}
 			"Tuple" => {
-				return __xreflect_builders0x121839438923924398234898924::TestBuilder::Tuple(None);
+				return __xreflect_builders::TestBuilder::Tuple(None);
 			}
 			"Struct" => {
-				return __xreflect_builders0x121839438923924398234898924::TestBuilder::Struct {
+				return __xreflect_builders::TestBuilder::Struct {
 					field: None,
 				};
 			}
