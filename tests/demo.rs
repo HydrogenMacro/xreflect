@@ -42,22 +42,36 @@ fn main() {
 			GameState::type_name() => {}
 		}
 	}
-
-	#[derive(Default, Reflect)]
-	pub struct Foo {
-		// pub fields are reflected by default
-		pub reflected: (),
-
-		// pub(crate)/pub(super)/private fields aren't
-		unreflected_by_default: (),
-
-		// but you can opt in (with an alias)
-		#[reflect(true, "cool_new_alias")]
-		reflected_even_if_private: (),
-
-		// or opt out
-		#[reflect(false)]
-		pub unreflected_even_when_pub: (),
-	}
 }
 */
+
+use std::any::TypeId;
+use xreflect::Reflect;
+// just derive Reflect
+#[derive(Reflect)]
+pub struct Enemy {
+	health: u8,
+}
+#[derive(Reflect)]
+pub enum GameState {
+	Playing,
+	Won { score: i32, remaining_health: u8 },
+	Lost(Enemy),
+}
+
+#[test]
+fn main() {
+	// You can now access and modify fields dynamically
+	let mut enemy = Enemy { health: 2 };
+	let enemy_health = enemy.get_field::<u8>("health");
+	assert_eq!(enemy_health, &2);
+	enemy.set_field::<u8>("health", 7);
+	assert_eq!(enemy.get_field::<u8>("health"), &7);
+
+	let game_state = GameState::Won { score: 500, remaining_health: 17 };
+	assert_eq!(game_state.get_type_of_field("score"), TypeId::of::<i32>());
+
+	// supports tuple structs as well!
+	let game_state = GameState::Lost(enemy);
+	assert_eq!(game_state.get_type_of_field_at(0), TypeId::of::<Enemy>());
+}

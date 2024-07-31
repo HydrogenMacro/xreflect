@@ -1,6 +1,5 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote};
-use syn::Index;
 
 use crate::wrapper_types::{EnumData, StructType};
 
@@ -9,7 +8,7 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 
 	// amount_of_fields() method
 	let mut amount_of_fields_branches = vec![];
-	for (i, enum_variant_data) in enum_data.variants.iter().enumerate() {
+	for (_, enum_variant_data) in enum_data.variants.iter().enumerate() {
 		let enum_variant_name_ident = Ident::new(&enum_variant_data.name, Span::call_site());
 		let match_ending_syntax = enum_variant_data.variant_type.match_ending_syntax();
 		let amount_of_fields = enum_variant_data.variant_type.amount_of_fields();
@@ -22,7 +21,7 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 
 	// try_get_index_of_field() method
 	let mut try_get_index_of_field_branches = vec![];
-	for (i, enum_variant_data) in enum_data.variants.iter().enumerate() {
+	for (_, enum_variant_data) in enum_data.variants.iter().enumerate() {
 		let enum_variant_name_ident = Ident::new(&enum_variant_data.name, Span::call_site());
 		let match_ending_syntax = enum_variant_data.variant_type.match_ending_syntax();
 		let member_name_branches = match &enum_variant_data.variant_type {
@@ -60,29 +59,28 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 	// try_get_field_at()/try_get_field_mut_at() methods
 	let mut try_get_field_at_branches = vec![];
 	let mut try_get_field_mut_at_branches = vec![];
-	for (i, enum_variant_data) in enum_data.variants.iter().enumerate() {
+	for (_, enum_variant_data) in enum_data.variants.iter().enumerate() {
 		let enum_variant_name_ident = Ident::new(&enum_variant_data.name, Span::call_site());
-		let match_ending_syntax_full = enum_variant_data.variant_type.match_ending_syntax_full();
-		let amount_of_fields = enum_variant_data.variant_type.amount_of_fields();
+		let match_ending_syntax_full = enum_variant_data.variant_type.match_ending_syntax_named();
 		let mut field_match_index_branches = vec![];
 		let mut field_mut_match_index_branches = vec![];
 		match &enum_variant_data.variant_type {
 			StructType::Unit => {},
 			StructType::Tuple(tuple_entries) => {
-				for (i, tuple_entry) in tuple_entries.iter().enumerate() {
+				for i in 0..tuple_entries.len() {
 					let field_name = format_ident!("field{}", i);
 					field_match_index_branches.push(
 						quote! {
 							#i => (#field_name as &dyn ::core::any::Any)
 								.downcast_ref::<T>()
-								.ok_or(ReflectError::WrongType),
+								.ok_or(::xreflect::ReflectError::WrongType),
 						}
 					);
 					field_mut_match_index_branches.push(
 						quote! {
 							#i => (#field_name as &mut dyn ::core::any::Any)
 								.downcast_mut::<T>()
-								.ok_or(ReflectError::WrongType),
+								.ok_or(::xreflect::ReflectError::WrongType),
 						}
 					);
 				}
@@ -94,14 +92,14 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 						quote! {
 							#i => (#field_name as &dyn ::core::any::Any)
 								.downcast_ref::<T>()
-								.ok_or(ReflectError::WrongType),
+								.ok_or(::xreflect::ReflectError::WrongType),
 						}
 					);
 					field_mut_match_index_branches.push(
 						quote! {
 							#i => (#field_name as &mut dyn ::core::any::Any)
 								.downcast_mut::<T>()
-								.ok_or(ReflectError::WrongType),
+								.ok_or(::xreflect::ReflectError::WrongType),
 						}
 					);
 				}
@@ -131,10 +129,9 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 
 	// try_get_type_of_field_at() method
 	let mut try_get_type_of_field_at_branches = vec![];
-	for (i, enum_variant_data) in enum_data.variants.iter().enumerate() {
+	for (_, enum_variant_data) in enum_data.variants.iter().enumerate() {
 		let enum_variant_name_ident = Ident::new(&enum_variant_data.name, Span::call_site());
 		let match_ending_syntax = enum_variant_data.variant_type.match_ending_syntax();
-		let amount_of_fields = enum_variant_data.variant_type.amount_of_fields();
 		let mut field_index_branches = vec![];
 		match &enum_variant_data.variant_type {
 			StructType::Unit => {}
@@ -205,5 +202,6 @@ pub(crate) fn reflect_enum(enum_data: EnumData) -> TokenStream {
 			}
 		}
 	};
+	// std::fs::write("aaa.rs", reflect_impl.to_string()).unwrap();
 	reflect_impl
 }

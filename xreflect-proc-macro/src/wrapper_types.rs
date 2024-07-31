@@ -1,8 +1,8 @@
-use std::{collections::HashMap, hash::Hash, iter};
+use std::{collections::HashMap, iter};
 
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens};
-use syn::{DataEnum, DataStruct, Fields, GenericParam, Generics, Token, Type, WherePredicate};
+use syn::{DataEnum, DataStruct, Fields, GenericParam, Generics, Type, WherePredicate};
 pub(crate) struct EnumData {
 	pub name: String,
 	pub generics: Vec<GenericType>,
@@ -120,9 +120,6 @@ pub(crate) enum StructType {
 	Struct(Vec<RecordEntry>),
 }
 impl StructType {
-	const UNIT_DISCRIMINANT: usize = 0;
-	const TUPLE_DISCRIMINANT: usize = 1;
-	const STRUCT_DISCRIMINANT: usize = 2;
 	pub fn amount_of_fields(&self) -> usize {
 		match self {
 			StructType::Unit => 0,
@@ -139,14 +136,14 @@ impl StructType {
 					(#(#a),*)
 				}
 			}
-			StructType::Struct(record_entries) => {
+			StructType::Struct(_) => {
 				quote! {
 					{ .. }
 				}
 			}
 		}
 	}
-	pub fn match_ending_syntax_full(&self) -> TokenStream {
+	pub fn match_ending_syntax_named(&self) -> TokenStream {
 		match self {
 			StructType::Unit => quote!{},
 			StructType::Tuple(tuple_entries) => {
@@ -164,18 +161,47 @@ impl StructType {
 			}
 		}
 	}
+	pub fn match_ending_syntax_ref(&self) -> TokenStream {
+		match self {
+			StructType::Unit => quote!{},
+			StructType::Tuple(tuple_entries) => {
+				let tuple_entries = (0..tuple_entries.len()).map(|i|format_ident!("field{}", i));
+				quote! {
+					(#(ref #tuple_entries),*)
+				}
+			}
+			StructType::Struct(record_entries) => {
+				let record_entry_names = record_entries.iter()
+					.map(|record_entry| Ident::new(&record_entry.0, Span::call_site()));
+				quote! {
+					{ #(ref #record_entry_names),* }
+				}
+			}
+		}
+	}
+	pub fn match_ending_syntax_ref_mut(&self) -> TokenStream {
+		match self {
+			StructType::Unit => quote!{},
+			StructType::Tuple(tuple_entries) => {
+				let tuple_entries = (0..tuple_entries.len()).map(|i|format_ident!("field{}", i));
+				quote! {
+					(#(ref mut #tuple_entries),*)
+				}
+			}
+			StructType::Struct(record_entries) => {
+				let record_entry_names = record_entries.iter()
+					.map(|record_entry| Ident::new(&record_entry.0, Span::call_site()));
+				quote! {
+					{ #(ref mut #record_entry_names),* }
+				}
+			}
+		}
+	}
 	pub fn field_names(&self) -> Vec<String> {
 		match self {
 			Self::Unit => Vec::new(),
 			Self::Tuple(tuple_entries) => (0usize..tuple_entries.len()).map(|i| i.to_string()).collect(),
 			Self::Struct(record_entries) => record_entries.iter().map(|record_entry| record_entry.0.clone()).collect()
-		}
-	}
-	pub fn discriminant(&self) -> usize {
-		match self {
-			Self::Unit => 0,
-			Self::Tuple(_) => 1,
-			Self::Struct(_) => 2
 		}
 	}
 }

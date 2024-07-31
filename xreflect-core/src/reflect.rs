@@ -1,8 +1,5 @@
-#![feature(const_type_id)]
-
 use std::{
 	any::{type_name, type_name_of_val, TypeId},
-	sync::LazyLock,
 };
 use crate::{ReflectError, StructType};
 pub trait Reflect: Sized {

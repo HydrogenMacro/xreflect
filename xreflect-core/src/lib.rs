@@ -1,3 +1,5 @@
+#![feature(const_type_id)]
+
 mod builder;
 mod reflect;
 mod types;
