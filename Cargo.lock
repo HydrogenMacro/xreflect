@@ -41,7 +41,7 @@ checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
 name = "xreflect"
 version = "0.1.0"
 dependencies = [
- "xreflect-core",
+ "xreflect-core 0.1.0",
  "xreflect-proc-macro",
 ]
 
@@ -50,11 +50,17 @@ name = "xreflect-core"
 version = "0.1.0"
 
 [[package]]
+name = "xreflect-core"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c114fa58f257d427775c649d68da2bcff2fb533b99035594208786aefeaefc91"
+
+[[package]]
 name = "xreflect-proc-macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "xreflect-core",
+ "xreflect-core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

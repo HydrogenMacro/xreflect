@@ -2,10 +2,15 @@
 name = "xreflect"
 version = "0.1.0"
 authors = ["hydrogenmacro <hydrogenmacro@gmail.com>"]
-description = "Quick and easy reflection"
-keywords = ["reflect", "reflection"]
+license = "MIT"
+keywords = ["reflect", "reflection", "dynamic"]
+description = "Basic macros for dynamic reflection of structs/enums"
+repository = "https://github.com/HydrogenMacro/xreflect"
+readme = "README.md"
 edition = "2021"
 
 [dependencies]
-xreflect-core = { path = "xreflect-core" }
-xreflect-proc-macro = { path = "xreflect-proc-macro" }
+# xreflect-core = { path = "xreflect-core" }
+# xreflect-proc-macro = { path = "xreflect-proc-macro" }
+xreflect-core = "0.1.0"
+xreflect-proc-macro = "0.1.0"

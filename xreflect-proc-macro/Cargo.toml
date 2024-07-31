@@ -2,6 +2,8 @@
 name = "xreflect-proc-macro"
 version = "0.1.0"
 edition = "2021"
+description = "Proc macros for xreflect"
+license = "MIT"
 
 [lib]
 proc-macro = true
@@ -10,4 +12,5 @@ proc-macro = true
 quote = "1"
 proc-macro2 = "1.0"
 syn = "2.0.72"
-xreflect-core = { path = "../xreflect-core" }
+# xreflect-core = { path = "../xreflect-core" }
+xreflect-core = "0.1.0"
