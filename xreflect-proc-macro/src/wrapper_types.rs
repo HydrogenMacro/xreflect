@@ -1,6 +1,6 @@
 use std::{collections::HashMap, hash::Hash, iter};
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use syn::{DataEnum, DataStruct, Fields, GenericParam, Generics, Token, Type, WherePredicate};
 pub(crate) struct EnumData {
@@ -157,7 +157,7 @@ impl StructType {
 			}
 			StructType::Struct(record_entries) => {
 				let record_entry_names = record_entries.iter()
-					.map(|record_entry| record_entry.0.clone());
+					.map(|record_entry| Ident::new(&record_entry.0, Span::call_site()));
 				quote! {
 					{ #(#record_entry_names),* }
 				}

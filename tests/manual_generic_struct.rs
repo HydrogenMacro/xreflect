@@ -16,7 +16,7 @@ impl<N: 'static> Reflect for Test<N> {
 
 	fn try_get_index_of_field(&self, field_name: &str) -> Result<usize, ReflectError> {
 		match field_name {
-			"a" => Ok(0),
+			"aa" => Ok(0),
 			"b" => Ok(1),
 			_ => Err(ReflectError::FieldNotFound),
 		}
@@ -59,12 +59,12 @@ impl<N: 'static> Reflect for Test<N> {
 }
 impl<N: 'static> StructReflect for Test<N> {
 	const TYPE: StructType =
-		StructType::Record(&[("a", TypeId::of::<i32>()), ("b", TypeId::of::<N>())]);
-	const FIELD_NAMES: &'static [&'static str] = &["a", "b"];
+		StructType::Record(&[("aa", TypeId::of::<i32>()), ("b", TypeId::of::<N>())]);
+	const FIELD_NAMES: &'static [&'static str] = &["aa", "b"];
 
 	fn try_get_index_of_field(field_name: &str) -> Result<usize, ReflectError> {
 		match field_name {
-			"a" => Ok(0),
+			"aa" => Ok(0),
 			"b" => Ok(1),
 			_ => Err(ReflectError::FieldNotFound),
 		}
@@ -83,7 +83,7 @@ mod __xreflect_builders0x121839438923924398234898924 {
 	impl<N> Builder<Test<N>> for TestBuilder<N> {
 		fn with_field<T: 'static>(mut self, field_name: &'static str, field_value: T) -> Self {
 			match field_name {
-				"a" => {
+				"aa" => {
 					if std::any::TypeId::of::<T>() == std::any::TypeId::of::<i32>() {
 						self.a = Some(unsafe { std::mem::transmute_copy::<T, i32>(&field_value) });
 					} else {
